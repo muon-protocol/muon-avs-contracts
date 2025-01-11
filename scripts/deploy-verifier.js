@@ -26,8 +26,7 @@ async function main() {
 
   await run("verify:verify", {
     address: contract.address,
-    constructorArguments: args,
-    contract: "contracts`/MuonAVSVerifier.sol:MuonAVSVerifier"
+    constructorArguments: args
   });
 }
 
