@@ -8,11 +8,6 @@ function sleep(milliseconds) {
 async function main() {
 
   const args = [
-    "50204901078414383821571509835455781853523933366194781589889075428529444529141",
-    {
-      x: "0x68b4c6d5f460598859e08c5f4da29b90de0a0e657e49c88924962d0f9b3858c0",
-      parity: 1,
-    },
     "0x2a22D9262d2F68b1339Cdad4be8c1ec418CCa81c"
   ]
 
@@ -32,7 +27,7 @@ async function main() {
   await run("verify:verify", {
     address: contract.address,
     constructorArguments: args,
-    contract: "contracts/MuonAVSVerifier.sol:MuonAVSVerifier"
+    contract: "contracts`/MuonAVSVerifier.sol:MuonAVSVerifier"
   });
 }
 
