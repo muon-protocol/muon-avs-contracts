@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./interfaces/IMuonClient.sol";
 import "./libs/EigenLayerVerifier.sol";
 
 contract MuonAVSVerifier is AccessControl {
-    using ECDSA for bytes32;
+    using MessageHashUtils for bytes32;
 
     struct App {
         address owner;
@@ -177,8 +177,11 @@ contract MuonAVSVerifier is AccessControl {
             apps[appId].muonPublicKey
         );
         require(verified, "Invalid MUON signature!");
-
-        EigenLayerVerifier._validateSignature(operator, hash, signature);
+        EigenLayerVerifier._validateSignature(
+            operator,
+            hash.toEthSignedMessageHash(),
+            signature
+        );
 
         emit SignatureVerified(appId, reqId, operator, signature);
     }
