@@ -20,6 +20,8 @@ contract MuonServiceManager is ECDSAServiceManagerBase {
      */
     mapping(address => uint256) public operatorsExitTime;
 
+    event OperatorRequestExit(address operator);
+
     constructor(
         address _avsDirectory,
         address _stakeRegistry,
@@ -50,24 +52,26 @@ contract MuonServiceManager is ECDSAServiceManagerBase {
         exitPendingPeriod = period;
     }
 
-    function requestExit() external {
+    function requestExit(address _operator) external onlyStakeRegistry {
         require(
-            ECDSAStakeRegistry(stakeRegistry).operatorRegistered(msg.sender),
+            ECDSAStakeRegistry(stakeRegistry).operatorRegistered(_operator),
             "Invalid operator"
         );
-        operatorsExitTime[msg.sender] = block.timestamp;
+        operatorsExitTime[_operator] = block.timestamp;
+
+        emit OperatorRequestExit(_operator);
     }
 
     /**
      * @inheritdoc ECDSAServiceManagerBase
      */
     function _deregisterOperatorFromAVS(
-        address operator
+        address _operator
     ) internal virtual override {
         require(
-            block.timestamp >= operatorsExitTime[operator] + exitPendingPeriod,
+            block.timestamp >= operatorsExitTime[_operator] + exitPendingPeriod,
             "Waiting period has not passed"
         );
-        super._deregisterOperatorFromAVS(operator);
+        super._deregisterOperatorFromAVS(_operator);
     }
 }
