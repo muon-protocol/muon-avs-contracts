@@ -38,11 +38,18 @@ contract MuonServiceManager is ECDSAServiceManagerBase {
         _disableInitializers();
     }
 
-    function initialize() external initializer {
-        __ServiceManager_init();
+    function initialize(
+        address _initialOwner,
+        address _rewardsInitiator
+    ) external initializer {
+        __ServiceManager_init(_initialOwner, _rewardsInitiator);
     }
 
-    function __ServiceManager_init() internal onlyInitializing {
+    function __ServiceManager_init(
+        address _initialOwner,
+        address _rewardsInitiator
+    ) internal onlyInitializing {
+        __ServiceManagerBase_init(_initialOwner, _rewardsInitiator);
         __ServiceManager_init_unchained();
     }
 
