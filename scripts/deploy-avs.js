@@ -64,7 +64,7 @@ const addresses = {
       },
     ],
   },
-  sepolia: {
+  arbitrumSepolia: {
     delegationManager: "0xA44151489861Fe9e3055d95adC98FbD462B948e7",
     avsDirectory: "0x055733000064333CaDDbC92763c58BF0192fFeBf",
     rewardsCoordinator: "0xAcc1fb458a1317E886dB376Fc8141540537E68fE",
@@ -129,6 +129,10 @@ const addresses = {
   },
 };
 
+function sleep(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
 function setupQuorum(strategies) {
   const totalMultipliers = 10_000;
   let multiplier;
@@ -152,7 +156,9 @@ function setupQuorum(strategies) {
     quorumStrategies.push(strategyParam);
   }
 
-  return quorumStrategies;
+  return {
+    strategies: quorumStrategies,
+  };
 }
 
 async function run() {
@@ -201,10 +207,11 @@ async function run() {
   );
 
   // 2. Encode Initializer Function Call
-  const initializerData = MyContract.interface.encodeFunctionData(
+  const initializerData = ServiceManagerImpl.interface.encodeFunctionData(
     "initialize",
     [
       deployer.address, // Pass deployer address as owner
+      deployer.address, // Pass deployer address as rewards initiator
     ]
   );
 
@@ -216,16 +223,37 @@ async function run() {
   await ServiceManagerProxy.deployed();
   console.log("ServiceManager proxy deployed at:", ServiceManagerProxy.address);
 
-  const quorum = setupQuorum(addresses[hre.network.name].strategies);
+  let quorum = setupQuorum(addresses[hre.network.name].strategies);
 
-  const tx = await StakeRegistryProxy.initialize(
-    ServiceManagerProxy.address,
-    6667,
-    quorum
-  ); // Pass any initialization parameters
+  quorum.strategies.sort((a, b) =>
+    a.strategy.toLowerCase().localeCompare(b.strategy.toLowerCase())
+  ); // b..strategy.compare(a.strategy) for reverse sort
+
+  const proxy = await ethers.getContractAt(
+    "MuonStakeRegistry",
+    StakeRegistryProxy.address
+  );
+
+  // Call the initialize function
+  const tx = await proxy.initialize(StakeRegistryProxy.address, 6667, quorum); // Pass required params
+
   await tx.wait();
 
   console.log("StakeRegistry proxy initialized!");
+
+  await sleep(20000);
+
+  try {
+    await hre.run("verify:verify", {
+      address: StakeRegistryProxy.address,
+    });
+    await sleep(5000);
+    await hre.run("verify:verify", {
+      address: ServiceManagerProxy.address,
+    });
+  } catch {
+    console.log("Failed to verify");
+  }
 }
 
 run()
