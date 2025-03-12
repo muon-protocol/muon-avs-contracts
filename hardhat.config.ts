@@ -29,6 +29,11 @@ const networks: { [networkName: string]: HttpNetworkUserConfig } = {
     // gas: 1600000,
     // gasPrice: 5616147756,
   },
+  holesky: {
+    url: "https://ethereum-holesky-rpc.publicnode.com",
+    chainId: 17000,
+    accounts
+  },
   bscTestnet: {
     url: "https://rpc.ankr.com/bsc_testnet_chapel",
     chainId: 97,
@@ -67,7 +72,7 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: "0.8.20",
+        version: "0.8.22",
         settings: {
           optimizer: {
             enabled: true,
@@ -91,6 +96,7 @@ const config: HardhatUserConfig = {
     apiKey: {
       mainnet: process.env.ETHERSCAN_KEY || "",
       sepolia: process.env.ETHERSCAN_KEY || "",
+      holesky: process.env.ETHERSCAN_KEY || "",
       goerli: process.env.ETHERSCAN_KEY || "",
       bscTestnet: process.env.BSCSCAN_KEY || "",
       bsc: process.env.BSCSCAN_KEY || "",
@@ -104,6 +110,14 @@ const config: HardhatUserConfig = {
       ftm: process.env.FTMSCAN_KEY || "",
     },
     customChains: [
+      {
+        network: "holesky",
+        chainId: 17000,
+        urls: {
+          apiURL: "https://api-holesky.etherscan.io/api",
+          browserURL: "https://holesky.etherscan.io/",
+        },
+      },
       {
         network: "ftm",
         chainId: 250,
