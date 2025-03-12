@@ -7,7 +7,7 @@ import {ECDSAStakeRegistry} from "eigenlayer/src/unaudited/ECDSAStakeRegistry.so
 import {IMuonServiceManager} from "./interfaces/IMuonServiceManager.sol";
 
 /// @title MUON Stake Registry
-contract MuonStakerRegistry is ECDSAStakeRegistry {
+contract MuonStakeRegistry is ECDSAStakeRegistry {
     constructor(
         IDelegationManager _delegationManager
     ) ECDSAStakeRegistry(_delegationManager) {
