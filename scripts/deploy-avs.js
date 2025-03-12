@@ -64,7 +64,7 @@ const addresses = {
       },
     ],
   },
-  arbitrumSepolia: {
+  holesky: {
     delegationManager: "0xA44151489861Fe9e3055d95adC98FbD462B948e7",
     avsDirectory: "0x055733000064333CaDDbC92763c58BF0192fFeBf",
     rewardsCoordinator: "0xAcc1fb458a1317E886dB376Fc8141540537E68fE",
@@ -246,10 +246,19 @@ async function run() {
   try {
     await hre.run("verify:verify", {
       address: StakeRegistryProxy.address,
+      constructorArguments: [
+        addresses[hre.network.name].delegationManager
+      ],
     });
     await sleep(5000);
     await hre.run("verify:verify", {
       address: ServiceManagerProxy.address,
+      constructorArguments: [
+        addresses[hre.network.name].avsDirectory,
+        StakeRegistryProxy.address,
+        addresses[hre.network.name].rewardsCoordinator,
+        addresses[hre.network.name].delegationManager
+      ]
     });
   } catch {
     console.log("Failed to verify");
