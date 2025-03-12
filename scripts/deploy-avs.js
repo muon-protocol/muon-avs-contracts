@@ -250,7 +250,13 @@ async function run() {
         addresses[hre.network.name].delegationManager
       ],
     });
-    await sleep(5000);
+  } catch {
+    console.log("Failed to verify");
+  }
+
+  await sleep(5000);
+
+  try {
     await hre.run("verify:verify", {
       address: ServiceManagerProxy.address,
       constructorArguments: [
@@ -260,7 +266,7 @@ async function run() {
         addresses[hre.network.name].delegationManager
       ]
     });
-  } catch {
+  } catch (error) {
     console.log("Failed to verify");
   }
 }
