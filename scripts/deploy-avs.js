@@ -207,7 +207,7 @@ async function run() {
   );
 
   // 2. Encode Initializer Function Call
-  const initializerData = ServiceManagerImpl.interface.encodeFunctionData(
+  const initializerData = ServiceManagerContract.interface.encodeFunctionData(
     "initialize",
     [
       deployer.address, // Pass deployer address as owner
@@ -235,7 +235,7 @@ async function run() {
   );
 
   // Call the initialize function
-  const tx = await proxy.initialize(StakeRegistryProxy.address, 6667, quorum); // Pass required params
+  const tx = await proxy.initialize(ServiceManagerProxy.address, 6667, quorum); // Pass required params
 
   await tx.wait();
 
