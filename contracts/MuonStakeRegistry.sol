@@ -18,4 +18,8 @@ contract MuonStakeRegistry is ECDSAStakeRegistry {
     function requestExit() external {
         IMuonServiceManager(_serviceManager).requestExit(msg.sender);
     }
+
+    function setServiceManager(address _serviceManagerAddr) external onlyOwner {
+        _serviceManager = _serviceManagerAddr;
+    }
 }
